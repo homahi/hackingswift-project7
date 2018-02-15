@@ -24,17 +24,19 @@ class ViewController: UITableViewController {
 
         }
 
-        if let url = URL(string: urlString) {
-            if let data = try? String(contentsOf: url) {
-                let json = JSON(parseJSON:data)
-                
-                if json["metadata"]["responseInfo"]["status"].intValue == 200 {
-                    parse(json:json)
-                    return
+        DispatchQueue.global(qos: .userInitiated).async { [unowned self] in 
+            if let url = URL(string: urlString) {
+                if let data = try? String(contentsOf: url) {
+                    let json = JSON(parseJSON:data)
+                    
+                    if json["metadata"]["responseInfo"]["status"].intValue == 200 {
+                        self.parse(json:json)
+                        return
+                    }
                 }
             }
+            self.showError()
         }
-        showError()
     }
 
     override func didReceiveMemoryWarning() {
